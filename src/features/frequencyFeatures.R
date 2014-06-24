@@ -1,14 +1,14 @@
-getFrequencyFeatures <- function(erpData, name, avgOnly=TRUE) {
+getFrequencyFeatures <- function(eegData, name, avgOnly=TRUE) {
   firstNComp <- 4
   if(avgOnly) {
     firstNComp <- 0
   }
   freqBounds <- data.frame(min=c(1,4,8,16,32),max=c(4,8,16,32,64))
-  freqSpec <- spectrum(t(erpData),plot=FALSE)
+  freqSpec <- spectrum(t(eegData),plot=FALSE)
   meanSpec <- rowMeans(freqSpec$spec)
   meanLogSpec <- log(meanSpec)
   
-  nofSamples <- ncol(erpData)
+  nofSamples <- ncol(eegData)
   nofBounds <- nrow(freqBounds)
   freqs <- freqSpec$freq * nofSamples
     

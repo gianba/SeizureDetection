@@ -1,5 +1,6 @@
 # All packages and user defined functions used in the loadFile function (i.e., all 
 # feature extraction function, etc. need to be specified here.)
+# This is required by the doSnow package for parallel processing...
 userFunctions <- c('getPath', 'loadFile', 'extractFeatures', 'getFrequencyFeatures')
 usedPackages <- c('R.matlab')
 

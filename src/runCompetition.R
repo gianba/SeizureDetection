@@ -1,3 +1,12 @@
+# Runs the entire workflow of loading data, extracting features, training classifier and building submission
+# The function directly writes a submission.csv file ready for submission to Kaggle
+#
+#   !!!  RUN setupWorkEnvironment() FIRST  !!!
+#
+# Parameters:
+#   dataPath: path to the folder which contains all the data folders (patients and dogs)
+# Returns:
+#   allData: A list of data.frames containing the extracted features and labels for every clip of each patient
 runCompetition <- function(dataPath) {
   allData <- list()
   
