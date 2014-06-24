@@ -1,4 +1,4 @@
-trainAndEvaluate <- function(dataPath) {
+runCompetition <- function(dataPath) {
   allData <- list()
   
   folders <- list.files(dataPath)
