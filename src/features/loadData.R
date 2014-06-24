@@ -9,19 +9,19 @@ usedPackages <- c('R.matlab')
 #   loadTrainingData: flag indicating if test data should be loaded as well
 # It returns a data.frame containing 
 #   clip ID
-#   all features, 
+#   all features 
 #   label ('ictal', 'interictal', NA), where NA represents the test set
 #   latency of the seizure, which is NA for all interictal and test clips
-loadData <- function(folderPath, loadTestData) {
+loadDataAndExtractFeatures <- function(folderPath, loadTestData) {
   print(paste('Load data and extract features from',folderPath))
-  print('Time for ICA')
+  print('Start ICA')
   print(system.time(icaWeights <- calculateICAWeights(folderPath)))
   files <- list.files(folderPath)
-  print('Time for feature extraction')
+  print('Start feature extraction')
   print(system.time(folderData <-foreach(i=1:length(files),.combine='rbind',.packages=usedPackages,.export=userFunctions) %dopar% {
     if(loadTestData | !grepl('_test_', files[i])) {
       filePath <- getPath(folderPath, files[i])
-      fileData <- loadFile(filePath, icaWeights)
+      fileData <- loadFileAndExtractFeatures(filePath, icaWeights)
       fileData$clipID = files[i]
       fileData
     }
@@ -29,7 +29,7 @@ loadData <- function(folderPath, loadTestData) {
   return(folderData)
 }
 
-loadFile <- function(filePath, icaWeights) {
+loadFileAndExtractFeatures <- function(filePath, icaWeights) {
   mat <- readMat(filePath)
   features <- extractFeatures(mat$data, icaWeights)
   seizure <- NA

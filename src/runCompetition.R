@@ -5,7 +5,7 @@ runCompetition <- function(dataPath) {
   submission <- foreach(ind=1:length(folders),.combine='rbind') %do% {
     folderPath <- getPath(dataPath,folders[ind])
     if(file.info(folderPath)$isdir) {
-      dataSet <- loadData(folderPath, TRUE)
+      dataSet <- loadDataAndExtractFeatures(folderPath, TRUE)
       allData[[ind]] <- dataSet
       buildClassifier(dataSet)
     } 
