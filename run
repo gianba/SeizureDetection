@@ -1,0 +1,30 @@
+#!/usr/bin/Rscript
+dataFolder=commandArgs(TRUE)[1]
+if(is.na(dataFolder)) stop("No data folder specified")
+if(!file.exists(dataFolder)) stop("Specified data folder does not exists")
+
+library('R.matlab')
+library('fastICA')
+library('foreach')
+library('doSNOW')
+library('glmnet')
+library('tools')
+
+NUMBER_OF_CORES = 4
+cl <- makeCluster(NUMBER_OF_CORES)
+registerDoSNOW(cl)
+
+sourceDir <- function(dir) {
+  for (f in list.files(dir, full.names=TRUE)) {
+    if (file.info(f)$isdir) sourceDir(f)
+    else if (file_ext(f) == "R") {
+      print(paste("---> Sourcing", f))
+      source(f)
+    }
+  }
+}
+
+sourceDir(getwd())
+runCompetition(dataFolder)
+
+
