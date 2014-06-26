@@ -3,16 +3,17 @@ dataFolder=commandArgs(TRUE)[1]
 if(is.na(dataFolder)) stop("No data folder specified")
 if(!file.exists(dataFolder)) stop("Specified data folder does not exists")
 
+cores=commandArgs(TRUE)[2]
+if(is.na(cores)) stop("No number of cores specified")
+if(is.na(as.numeric(cores))) stop("The number of cores must be an integer")
+cores<-as.numeric(cores)
+
 library('R.matlab')
 library('fastICA')
 library('foreach')
 library('doSNOW')
 library('glmnet')
 library('tools')
-
-NUMBER_OF_CORES = 4
-cl <- makeCluster(NUMBER_OF_CORES)
-registerDoSNOW(cl)
 
 sourceDir <- function(dir) {
   for (f in list.files(dir, full.names=TRUE)) {
@@ -24,6 +25,7 @@ sourceDir <- function(dir) {
   }
 }
 
+registerDoSNOW(makeCluster(cores))
 sourceDir(getwd())
 runCompetition(dataFolder)
 
