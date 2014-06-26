@@ -14,6 +14,9 @@ library('foreach')
 library('doSNOW')
 library('glmnet')
 library('tools')
+library('fractaldim')
+#library('pracma')
+library('fractal')
 
 sourceDir <- function(dir) {
   for (f in list.files(dir, full.names=TRUE)) {

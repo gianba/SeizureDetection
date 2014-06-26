@@ -5,10 +5,13 @@
 #
 # Parameters:
 #   dataPath: path to the folder which contains all the data folders (patients and dogs)
-# Returns:
+# Returns list with field:
 #   allData: A list of data.frames containing the extracted features and labels for every clip of each patient
+#   info: Informations about the classification, features relevance, etc. dependent on the classifier used
 runCompetition <- function(dataPath) {
   allData <- list()
+  # global variable that can be written by classifier
+  info <<- NULL
   
   folders <- list.files(dataPath)
   submission <- foreach(ind=1:length(folders),.combine='rbind') %do% {
@@ -16,10 +19,10 @@ runCompetition <- function(dataPath) {
     if(file.info(folderPath)$isdir) {
       dataSet <- loadDataAndExtractFeatures(folderPath, TRUE)
       allData[[ind]] <- dataSet
-      buildClassifier(dataSet)
+      trainAndPredictLogistic(dataSet)
     } 
   }
   
   write.csv(submission, file="submission.csv", row.names=FALSE)
-  return(allData)
+  return(list(data=allData,info=info))
 }

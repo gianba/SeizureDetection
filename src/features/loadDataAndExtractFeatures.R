@@ -1,8 +1,17 @@
 # All packages and user defined functions used in the loadFile function (i.e., all 
 # feature extraction function, etc. need to be specified here.)
 # This is required by the doSnow package for parallel processing...
-userFunctions <- c('getPath', 'loadFileAndExtractFeatures', 'extractFeatures', 'getFrequencyFeatures')
-usedPackages <- c('R.matlab')
+userFunctions <- c('getPath', 
+                   'loadFileAndExtractFeatures', 
+                   'extractFeatures', 
+                   'getFrequencyFeatures', 
+                   'getFractalDimFeatures',
+#                   'getEntropyFeatures',
+                   'getLyapunovFeature')
+usedPackages <- c('R.matlab',
+                  'fractaldim',
+#                  'pracma',
+                  'fractal')
 
 # Loads all the data from a folder and extracts the features for each file
 # Parameters:
