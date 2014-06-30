@@ -6,11 +6,9 @@ userFunctions <- c('getPath',
                    'extractFeatures', 
                    'getFrequencyFeatures', 
                    'getFractalDimFeatures',
-#                   'getEntropyFeatures',
                    'getLyapunovFeature')
 usedPackages <- c('R.matlab',
                   'fractaldim',
-#                  'pracma',
                   'fractal')
 
 # Loads all the data from a folder and extracts the features for each file
@@ -25,13 +23,13 @@ usedPackages <- c('R.matlab',
 loadDataAndExtractFeatures <- function(folderPath, loadTestData) {
   print(paste('Load data and extract features from',folderPath))
   print('Start ICA')
-  print(system.time(icaWeights <- calculateICAWeights(folderPath)))
+  print(system.time(transformations <- calculateTransformationWeights(folderPath)))
   files <- list.files(folderPath)
   print('Start feature extraction')
   print(system.time(folderData <-foreach(i=1:length(files),.combine='rbind',.packages=usedPackages,.export=userFunctions) %dopar% {
     if(loadTestData | !grepl('_test_', files[i])) {
       filePath <- getPath(folderPath, files[i])
-      fileData <- loadFileAndExtractFeatures(filePath, icaWeights)
+      fileData <- loadFileAndExtractFeatures(filePath, transformations$ica, transformations$pca)
       fileData$clipID = files[i]
       fileData
     }
@@ -39,9 +37,9 @@ loadDataAndExtractFeatures <- function(folderPath, loadTestData) {
   return(folderData)
 }
 
-loadFileAndExtractFeatures <- function(filePath, icaWeights) {
+loadFileAndExtractFeatures <- function(filePath, icaWeights, pcaWeights) {
   mat <- readMat(filePath)
-  features <- extractFeatures(mat$data, icaWeights)
+  features <- extractFeatures(mat$data, icaWeights, pcaWeights)
   seizure <- NA
   lat <- NA
   if(grepl('_ictal_', filePath)) {

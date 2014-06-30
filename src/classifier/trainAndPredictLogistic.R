@@ -1,5 +1,5 @@
 trainAndPredictLogistic <- function(dataSet) {
-  PROB_EARLY_WITHOUT_TRAINING = 0.3
+  PROB_EARLY_WITHOUT_TRAINING = 0.5
   
   featureSet <- subset(dataSet,select=-c(label,latency,clipID))
   features <- as.matrix(featureSet)
@@ -16,19 +16,22 @@ trainAndPredictLogistic <- function(dataSet) {
   submission$seizure <- 1-predict(fit, newx=features[testInd,],s='lambda.min',type='response')
   
   # predicting probability of early seizure
-  hasEarlyTrainingSamples <- length(unique(early[!testInd]))>1
+  seizureInd <- seizure == 'ictal'
+  seizureInd[is.na(seizure)] <- FALSE
+  hasEarlyTrainingSamples <- length(unique(early[seizureInd]))>1
   if(hasEarlyTrainingSamples) {
-    fit <- cv.glmnet(features[!testInd,],early[!testInd],family='binomial',type.measure="auc")
+    fit <- cv.glmnet(features[seizureInd,],early[seizureInd],family='binomial',type.measure="auc")
     earlyAssessment <- accessQuality(fit,'Early',colnames(featureSet))
-    submission$early <- predict(fit, newx=features[testInd,],s='lambda.min',type='response')
+    earlyProb <- predict(fit, newx=features[testInd,],s='lambda.min',type='response') 
+    submission$early <- earlyProb * submission$seizure
   } else {
     # if no early seizure is contained in the training set, use default value
     submission$early <- PROB_EARLY_WITHOUT_TRAINING * submission$seizure
   }
   
   # correct impossible classifications, i.e., if prob. for early is higher than for seizure
-  impossibleInds <- submission$early > submission$seizure
-  submission$early[impossibleInds] <- submission$seizure[impossibleInds]
+#  impossibleInds <- submission$early > submission$seizure
+#  submission$early[impossibleInds] <- submission$seizure[impossibleInds]
   
   if(is.null(info)) {
     info <<- list()

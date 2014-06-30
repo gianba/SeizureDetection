@@ -5,8 +5,8 @@ setupWorkEnvironment <- function() {
   library('doSNOW')
   library('glmnet')
   library('fractaldim')
-  #library('pracma')
   library('fractal')
+  library('e1071')
   
   NUMBER_OF_CORES = 4
   cl <- makeCluster(NUMBER_OF_CORES)

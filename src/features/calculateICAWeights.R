@@ -1,4 +1,4 @@
-calculateICAWeights <- function(folderPath) {
+calculateTransformationWeights <- function(folderPath) {
   signal <- NULL
   files <- list.files(folderPath)
   for(file in files) {
@@ -18,5 +18,6 @@ calculateICAWeights <- function(folderPath) {
     }
   }
   a <- fastICA(t(signal), n.comp=16, alg.typ='parallel')
-  return(a$K %*% a$W)
+  p <- princomp(t(signal))
+  return(list(ica=a$K %*% a$W, pca=p$loadings))
 }

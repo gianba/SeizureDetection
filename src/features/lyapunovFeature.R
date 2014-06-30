@@ -1,7 +1,23 @@
 getLyapunovFeature <- function(eegData,name){
-  lyapunov <-lyapunov(eegData,scale=c(16))
-  firstExp <- mean(lyapunov[[1]][[1]])
-  result <- data.frame(firstExp)
-  colnames(result) <- paste(name,'Lyapunov')
-  return(result)
+  
+  lyapunov <- list()
+  dataDim <- dim(eegData)
+  nofSamples <- dataDim[2]
+  nofComponents <- dataDim[1]
+  dimension <- round(log(nofSamples)/1.7)
+  for(i in 1:nofComponents) {
+    scale <- min(round(30/i), 12)
+    lyapunov[i] <- lyapunov(eegData[i,],dimension=dimension,scale=scale)
+  }
+  
+  features <- matrix(nrow=1, ncol=nofComponents)
+  names <- vector(mode='character', length=nofComponents)
+  
+  for(n in 1:nofComponents) {
+    features[1,n] <- mean(lyapunov[[n]][[1]][[1]])
+    names[n] <- paste(name,'LyapunovC',n,sep="")
+  }
+  
+  colnames(features) <- names
+  return(data.frame(features))
 }
