@@ -1,16 +1,17 @@
-getFrequencyFeatures <- function(eegData, name, nofNonAvgComp=0) {
+getFrequencyFeatures <- function(data, name, nofNonAvgComp=0) {
 
   freqBounds <- data.frame(min=c(1,4,8,16,32,64),max=c(4,8,16,32,64,100))
-  freqSpec <- spectrum(t(eegData),plot=FALSE)
+  freqSpec <- spectrum(t(data),plot=FALSE)
   meanSpec <- rowMeans(freqSpec$spec)
   meanLogSpec <- log(meanSpec)
   
-  nofSamples <- ncol(eegData)
+  nofSamples <- ncol(data)
   nofBounds <- nrow(freqBounds)
   freqs <- freqSpec$freq * nofSamples
   
-  features <- matrix(nrow=1, ncol=nofBounds * (nofNonAvgComp+1))
-  names <- vector(mode='character', length=nofBounds * (nofNonAvgComp+1))
+  nofFeatures <- nofBounds * (nofNonAvgComp+1)
+  features <- matrix(nrow=1, ncol=nofFeatures)
+  names <- vector(mode='character', length=nofFeatures)
   for(i in 1:nofBounds) {
     containedFreqsInds <- freqBounds$min[i] <= freqs & freqs < freqBounds$max[i]
     if(nofNonAvgComp>0) {
