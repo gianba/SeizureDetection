@@ -8,28 +8,23 @@ if(is.na(cores)) stop("No number of cores specified")
 if(is.na(as.numeric(cores))) stop("The number of cores must be an integer")
 cores<-as.numeric(cores)
 
-library('R.matlab')
-library('fastICA')
-library('foreach')
-library('doSNOW')
-library('glmnet')
-library('tools')
-library('fractaldim')
-#library('pracma')
-library('fractal')
-
 sourceDir <- function(dir) {
   for (f in list.files(dir, full.names=TRUE)) {
     if (file.info(f)$isdir) sourceDir(f)
-    else if (file_ext(f) == "R") {
+    else if (grepl(".+.R$", f)) {
       print(paste("---> Sourcing", f))
       source(f)
     }
   }
 }
-
-registerDoSNOW(makeCluster(cores))
 sourceDir(getwd())
-runCompetition(dataFolder)
 
-
+tryCatch({
+  setupWorkEnvironment(FALSE);
+  cl <- makeCluster(cores);
+  registerDoSNOW(cl);
+  runCompetition(dataFolder);
+  }, finally = {
+    print("Error. Releasing resources...");
+    stopCluster(cl)
+  })
