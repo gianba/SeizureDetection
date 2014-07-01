@@ -4,10 +4,10 @@ getLyapunovFeature <- function(eegData,name){
   dataDim <- dim(eegData)
   nofSamples <- dataDim[2]
   nofComponents <- dataDim[1]
-  dimension <- round(log(nofSamples)/1.7)
+  dimension <- 4 #round(log(nofSamples)/1.7)
   for(i in 1:nofComponents) {
-    scale <- min(round(30/i), 12)
-    lyapunov[i] <- lyapunov(eegData[i,],dimension=dimension,scale=scale)
+    scale <- 16# min(round(30/i), 12)
+    lyapunov[[i]] <- lyapunov(eegData[i,],dimension=dimension,scale=scale)
   }
   
   features <- matrix(nrow=1, ncol=nofComponents)
