@@ -25,6 +25,6 @@ tryCatch({
   registerDoSNOW(cl);
   runCompetition(dataFolder);
   }, finally = {
-    print("Error. Releasing resources...");
+    print("Releasing resources...");
     stopCluster(cl)
   })
