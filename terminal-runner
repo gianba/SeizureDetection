@@ -9,7 +9,7 @@ if(is.na(as.numeric(cores))) stop("The number of cores must be an integer")
 cores<-as.numeric(cores)
 
 tryCatch({
-  source('./src/setupWorkEnviroment.R')
+  source('./src/setupWorkEnvironment.R')
   setupWorkEnvironment(FALSE);
   cl <- makeCluster(cores);
   registerDoSNOW(cl);
