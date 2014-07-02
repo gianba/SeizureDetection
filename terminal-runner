@@ -8,18 +8,8 @@ if(is.na(cores)) stop("No number of cores specified")
 if(is.na(as.numeric(cores))) stop("The number of cores must be an integer")
 cores<-as.numeric(cores)
 
-sourceDir <- function(dir) {
-  for (f in list.files(dir, full.names=TRUE)) {
-    if (file.info(f)$isdir) sourceDir(f)
-    else if (grepl(".+.R$", f)) {
-      print(paste("---> Sourcing", f))
-      source(f)
-    }
-  }
-}
-sourceDir(getwd())
-
 tryCatch({
+  source('./src/setupWorkEnviroment.R')
   setupWorkEnvironment(FALSE);
   cl <- makeCluster(cores);
   registerDoSNOW(cl);
