@@ -40,7 +40,7 @@ loadDataAndExtractFeatures <- function(folderPath, loadTestData) {
 
 loadFileAndExtractFeatures <- function(filePath, icaWeights, pcaWeights) {
   mat <- readMat(filePath)
-  features <- extractFeatures(mat$data, icaWeights, pcaWeights)
+  features <- extractFeatures(mat$data, round(mat$freq), icaWeights, pcaWeights)
   seizure <- NA
   lat <- NA
   if(grepl('_ictal_', filePath)) {
