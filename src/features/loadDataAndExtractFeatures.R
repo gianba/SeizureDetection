@@ -6,7 +6,8 @@ userFunctions <- c('getPath',
                    'extractFeatures', 
                    'getFrequencyFeatures', 
                    'getFractalDimFeatures',
-                   'getLyapunovFeature')
+                   'getLyapunovFeature',
+                   'getPCAFeatures')
 usedPackages <- c('R.matlab',
                   'fractaldim',
                   'fractal')
