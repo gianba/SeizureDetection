@@ -10,10 +10,10 @@ extractFeatures <- function(eegClipData, icaWeights, pcaWeights) {
   # The columns should be named after the extracted feature.
   # The features can be appended to the returning "features" data.frame using cbind()
   # features <- cbind(getXXXFeatures(...), features)
-  features <- getFrequencyFeatures(eegClipData,'SpecRaw')
+  features <- getFrequencyFeatures(eegClipFilteredData,'SpecRaw')
   features <- cbind(getFrequencyFeatures(icaData,'SpecICA',NOF_ICA_COMPONENTS), features)
   features <- cbind(getFrequencyFeatures(pcaData,'SpecPCA',NOF_PCA_COMPONENTS), features)
-  features <- cbind(getFractalDimFeatures(eegClipData[c(1,5,9,13),],'Raw'), features)
+  features <- cbind(getFractalDimFeatures(eegClipFilteredData[c(1,5,9,13),],'Raw'), features)
   features <- cbind(getFractalDimFeatures(icaData,'ICA'), features)
   features <- cbind(getFractalDimFeatures(pcaData,'PCA'), features)
   features <- cbind(getLyapunovFeature(icaData,'ICA'),features)
