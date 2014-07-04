@@ -10,7 +10,8 @@ userFunctions <- c('getPath',
                    'getPCAFeatures')
 usedPackages <- c('R.matlab',
                   'fractaldim',
-                  'fractal')
+                  'fractal', 
+                  'signal')
 
 # Loads all the data from a folder and extracts the features for each file
 # Parameters:
@@ -23,7 +24,7 @@ usedPackages <- c('R.matlab',
 #   latency of the seizure, which is NA for all interictal and test clips
 loadDataAndExtractFeatures <- function(folderPath, loadTestData) {
   print(paste('Load data and extract features from',folderPath))
-  print('Start ICA')
+  print('Calculate ICA/PCA components')
   print(system.time(transformations <- calculateTransformationWeights(folderPath)))
   files <- list.files(folderPath)
   print('Start feature extraction')
@@ -40,7 +41,7 @@ loadDataAndExtractFeatures <- function(folderPath, loadTestData) {
 
 loadFileAndExtractFeatures <- function(filePath, icaWeights, pcaWeights) {
   mat <- readMat(filePath)
-  features <- extractFeatures(mat$data, round(mat$freq), icaWeights, pcaWeights)
+  features <- extractFeatures(mat$data, icaWeights, pcaWeights)
   seizure <- NA
   lat <- NA
   if(grepl('_ictal_', filePath)) {
