@@ -1,5 +1,8 @@
 # Extracts the features from the eegData
 extractFeatures <- function(eegClipData, icaWeights, pcaWeights) {
+
+  eegClipFilteredData <- getFilteredData(eegClipData)
+
   # Components are arranged in rows
   NOF_ICA_COMPONENTS <- 6
   NOF_PCA_COMPONENTS <- 5
