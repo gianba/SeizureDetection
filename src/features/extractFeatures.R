@@ -21,7 +21,7 @@ extractFeatures <- function(eegClipData, icaWeights, pcaWeights) {
   features <- cbind(getFractalDimFeatures(pcaData,'PCA'), features)
   features <- cbind(getLyapunovFeature(icaData,'ICA'),features)
   features <- cbind(getLyapunovFeature(pcaData[1:4,],'PCA'),features)
-  features <- cbind(getPCAFeatures(eegData),features)
+  features <- cbind(getPCAFeatures(eegClipData),features)
 
   return(features)
 }
