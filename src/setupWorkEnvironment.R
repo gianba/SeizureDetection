@@ -9,7 +9,7 @@ setupWorkEnvironment <- function(createCluster = TRUE, dir = getwd()) {
   library('fractal')
   library('e1071')
 
-  sourceDir(dir)
+  sourceDir(sprintf('%s/src', dir))
   
   if (createCluster) {
     NUMBER_OF_CORES = 4
