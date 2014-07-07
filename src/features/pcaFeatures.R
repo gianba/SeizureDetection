@@ -1,5 +1,5 @@
 getPCAFeatures <- function(eegData) {
-  NOF_COMPONENTS <- 4
+  NOF_COMPONENTS <- 5
   pc <- princomp(t(eegData),scores=FALSE)
   totalSD <- sum(pc$sdev)
   

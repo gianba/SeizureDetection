@@ -8,6 +8,8 @@ setupWorkEnvironment <- function(createCluster = TRUE, dir = getwd()) {
   library('fractaldim')
   library('fractal')
   library('e1071')
+  library('reshape2')
+  library('ggplot2')
 
   sourceDir(dir)
   

@@ -18,6 +18,6 @@ calculateTransformationWeights <- function(folderPath) {
     }
   }
   a <- fastICA(t(signal), n.comp=16, alg.typ='parallel')
-  p <- princomp(t(signal))
+  p <- princomp(t(signal),scores=FALSE)
   return(list(ica=a$K %*% a$W, pca=p$loadings))
 }
