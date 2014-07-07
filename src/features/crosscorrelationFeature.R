@@ -1,6 +1,6 @@
 getCrossCorrelationFeatures <- function(eegData) {
-  selected_top_cc <- c(1,5,25,120)
-  nof_CC <- length(selected_top_cc)
+  sample_cc_dist_perc <- c(1,2,4,6,10,15,20,40,70,100)
+  nof_CC <- length(sample_cc_dist_perc)
   
   features <- matrix(nrow=1, ncol=nof_CC+1)
   names <- vector(mode='character', length=nof_CC+1)
@@ -13,8 +13,10 @@ getCrossCorrelationFeatures <- function(eegData) {
      }
    }
   sortedCC <- sort(abs(cc), decreasing=TRUE)
+  ccLength <- length(sortedCC)
   for(n in 1:nof_CC) {
-    features[1,n] <- sortedCC[selected_top_cc[n]]
+    ind <- round(ccLength * sample_cc_dist_perc[n] / 100)
+    features[1,n] <- sortedCC[ind]
     names[n] <- paste('CrossCor',n,sep="")
   }
   features[1,nof_CC+1] <- mean(abs(cc),na.rm=TRUE)
