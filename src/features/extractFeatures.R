@@ -19,6 +19,9 @@ extractFeatures <- function(eegData, icaWeights, pcaWeights) {
   features <- cbind(getLyapunovFeature(icaData,'ICA'),features)
   features <- cbind(getLyapunovFeature(pcaData[1:4,],'PCA'),features)
   features <- cbind(getPCAFeatures(eegData),features)
+  features <- cbind(getCrossCorrelationFeatures(eegData),features)
+#  features <- cbind(getMaxStepFeatures(eegData),features)
+#  features <- cbind(getMaxStepFeatures(pcaData),features)
   
   return(features)
 }
