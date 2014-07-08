@@ -1,14 +1,20 @@
 # Runs the entire workflow of loading data, extracting features, training classifier and building submission
 # The function directly writes a submission.csv file ready for submission to Kaggle
+# If transformations.RData containing the ICA and PCA transformation weights is present in
+# the working directory, it is loaded and ICA and PCA is not computed. Otherwise PCA and ICA
+# are computed and stored in submission.csv.
 #
 #   !!!  RUN setupWorkEnvironment() FIRST  !!!
 #
 # Parameters:
 #   dataPath: path to the folder which contains all the data folders (patients and dogs)
+#   existingDataSet: an optional list of data.frames containing previously computed features and labels for
+#         all subjects. If provided, the extracted features are appended (or overwritten) to
+#         this dataset.
 # Returns list with field:
 #   allData: A list of data.frames containing the extracted features and labels for every clip of each patient
 #   info: Informations about the classification, features relevance, etc. dependent on the classifier used
-runCompetition <- function(dataPath) {
+runCompetition <- function(dataPath, existingDataSet=NULL) {
   PATH_TO_TRANSFORMATIONS <- './transformations.RData'
   allData <- list()
   # global variable that can be written by classifier
@@ -25,20 +31,25 @@ runCompetition <- function(dataPath) {
   
   folders <- list.files(dataPath)
   submission <- foreach(ind=1:length(folders),.combine='rbind') %do% {
-    folderPath <- getPath(dataPath,folders[ind])
+    folder <- folders[ind]
+    folderPath <- getPath(dataPath,folder)
     if(file.info(folderPath)$isdir) {
       # if transformations are precomputed, extract the transformation for the given subject
       if(transformationsPrecomputed) {
-        transformations <- transformationsList[folders[ind]]
+        transformations <- transformationsList[[folder]]
       }
       # load the data, compute transformations if not given, and extract features
-      extractedData <- loadDataAndExtractFeatures(folderPath, TRUE, transformations)
+      extractedData <- loadDataAndExtractFeatures(folderPath=folderPath, loadTestData=TRUE, transformations=transformations)
       
       # store dataSet (with all features and labels) and the transformations, 
       # if they have not been loaded from the file
-      allData[[ind]] <- extractedData$dataSet
+      if(is.null(existingDataSet)) {
+        allData[[folder]] <- extractedData$dataSet        
+      } else {
+        allData[[folder]] <- mergeDataSets(existingDataSet[[folder]],extractedData$dataSet)
+      }
       if(!transformationsPrecomputed) {
-        transformationsList[folders[ind]] <- extractedData$transformations
+        transformationsList[[folder]] <- extractedData$transformations
       }
       
       # train classifier and make prediction
@@ -58,4 +69,13 @@ runCompetition <- function(dataPath) {
   # return all dataSets (with all features and labels) for further process in trainOnly()
   # and return info list, containing evaluations of the classifier
   return(list(data=allData,info=info))
+}
+
+mergeDataSets <- function(existingDataSet,extractedDataSet) {
+  extractedFeatures <- subset(extractedDataSet,select=-c(label,latency,clipID))
+  featureNames <- colnames(extractedFeatures)
+  for(f in featureNames) {
+    existingDataSet[f] <- extractedFeatures[f]
+  }
+  return(existingDataSet)
 }
