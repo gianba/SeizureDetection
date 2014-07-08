@@ -27,6 +27,7 @@ trainAndPredictLogistic <- function(dataSet) {
   } else {
     # if no early seizure is contained in the training set, use default value
     submission$early <- PROB_EARLY_WITHOUT_TRAINING * submission$seizure
+    earlyAssessment <- list(auc=0)
   }
   
   # correct impossible classifications, i.e., if prob. for early is higher than for seizure
@@ -37,25 +38,31 @@ trainAndPredictLogistic <- function(dataSet) {
     info <<- list()
     info$seizureFAct <<- seizureAssessment$fAct
     info$seizureFRank <<- seizureAssessment$fRank
-    info$earlyFAct <<- earlyAssessment$fAct
-    info$earlyFRank <<- earlyAssessment$fRank
+    if(hasEarlyTrainingSamples) {
+      info$earlyFAct <<- earlyAssessment$fAct
+      info$earlyFRank <<- earlyAssessment$fRank
+    } else {
+      info$earlyFAct <<- seizureAssessment$fAct
+      info$earlyFRank <<- seizureAssessment$fRank
+    }
   } else {
     info$seizureFAct <<- rbind(info$seizureFAct,seizureAssessment$fAct)
     info$seizureFRank <<- rbind(info$seizureFRank,seizureAssessment$fRank)
     if(hasEarlyTrainingSamples) {
       info$earlyFAct <<- rbind(info$earlyFAct,earlyAssessment$fAct)
       info$earlyFRank <<- rbind(info$earlyFRank,earlyAssessment$fRank)
-    }
+    } 
   }  
   
-  return(submission)
+  return(list(submission=submission,performance=c(seizureAssessment$auc,earlyAssessment$auc)))
 }
 
 
 accessQuality <- function(fit, classifierName, featureNames) {
   lambdaInd <- match(fit$lambda.min,fit$lambda)
   beta <- fit$glmnet.fit$beta
-  print(paste(classifierName,'AUC =',fit$cvm[lambdaInd]))
+  AUC <- fit$cvm[lambdaInd]
+  print(paste(classifierName,'AUC =',AUC))
   
   fActivation <- data.frame(matrix(abs(beta[,lambdaInd]),nrow=1))
   colnames(fActivation) <- featureNames
@@ -64,5 +71,5 @@ accessQuality <- function(fit, classifierName, featureNames) {
   fRank <- data.frame(matrix(rank(firstOcc),nrow=1))
   colnames(fRank) <- featureNames
 
-  return(list(fAct=fActivation,fRank=fRank))
+  return(list(fAct=fActivation,fRank=fRank,auc=AUC))
 }

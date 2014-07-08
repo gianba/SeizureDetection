@@ -19,7 +19,8 @@ runCompetition <- function(dataPath) {
     if(file.info(folderPath)$isdir) {
       dataSet <- loadDataAndExtractFeatures(folderPath, TRUE)
       allData[[ind]] <- dataSet
-      trainAndPredictLogistic(dataSet)
+      prediction <- trainAndPredictLogistic(dataSet)
+      prediction$submission
     } 
   }
   
