@@ -23,6 +23,9 @@ extractFeatures <- function(eegData, icaWeights, pcaWeights) {
   features <- cbind(getMaxStepFeatures(eegData, 'Raw'),features)
   features <- cbind(getMaxStepFeatures(pcaData, 'PCA'),features)
   features <- cbind(getMaxStepFeatures(icaData, 'ICA'),features)
+  features <- cbind(getMaxAmplitudeChangeFeatures(eegData, 'Raw'),features)
+  features <- cbind(getMaxAmplitudeChangeFeatures(pcaData, 'PCA'),features)
+  features <- cbind(getMaxAmplitudeChangeFeatures(icaData, 'ICA'),features)
   
   return(features)
 }
