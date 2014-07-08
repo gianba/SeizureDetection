@@ -22,6 +22,7 @@ extractFeatures <- function(eegData, icaWeights, pcaWeights) {
   features <- cbind(getCrossCorrelationFeatures(eegData),features)
   features <- cbind(getMaxStepFeatures(eegData, 'Raw'),features)
   features <- cbind(getMaxStepFeatures(pcaData, 'PCA'),features)
+  features <- cbind(getMaxStepFeatures(icaData, 'ICA'),features)
   
   return(features)
 }
