@@ -24,15 +24,15 @@ usedPackages <- c('R.matlab',
 #   label ('ictal', 'interictal', NA), where NA represents the test set
 #   latency of the seizure, which is NA for all interictal and test clips
 loadDataAndExtractFeatures <- function(folderPath, loadTestData) {
-  print(paste('Load data and extract features from',folderPath))
-  print('Calculate ICA/PCA components')
+  logMsg(paste('Load data and extract features from',folderPath))
+  logMsg('Calculate ICA/PCA components')
   print(system.time(transformations <- calculateTransformationWeights(folderPath)))
   files <- list.files(folderPath)
-  print('Start feature extraction')
+  logMsg('Start feature extraction')
   print(system.time(folderData <-foreach(i=1:length(files),.combine='rbind',.packages=usedPackages,.export=userFunctions) %dopar% {
     if(loadTestData | !grepl('_test_', files[i])) {
       filePath <- getPath(folderPath, files[i])
-      fileData <- loadFileAndExtractFeatures(filePath, transformations$ica, transformations$pca)
+      fileData <- loadFileAndExtractFeatures(filePath, transformations$ica, transformations$pca, transformations$filteredClips)
       fileData$clipID = files[i]
       fileData
     }
@@ -40,9 +40,14 @@ loadDataAndExtractFeatures <- function(folderPath, loadTestData) {
   return(folderData)
 }
 
-loadFileAndExtractFeatures <- function(filePath, icaWeights, pcaWeights) {
+loadFileAndExtractFeatures <- function(filePath, icaWeights, pcaWeights, filteredClips) {
   mat <- readMat(filePath)
-  features <- extractFeatures(mat$data, icaWeights, pcaWeights)
+  fileName <- basename(filePath)
+  filteredClip <- filteredClips$fileName
+  if(is.null(filteredClip)){
+    filteredClip <- getFilteredSignal(mat$data)
+  }
+  features <- extractFeatures(filteredClip, icaWeights, pcaWeights)
   seizure <- NA
   lat <- NA
   if(grepl('_ictal_', filePath)) {
