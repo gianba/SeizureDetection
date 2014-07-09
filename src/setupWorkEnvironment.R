@@ -9,6 +9,7 @@ setupWorkEnvironment <- function(createCluster = TRUE, dir = getwd()) {
   library('fractal')
   library('e1071')
   library('signal')
+  library('hash')
 
   sourceDir(dir)
   
