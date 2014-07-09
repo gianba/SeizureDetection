@@ -28,7 +28,7 @@ loadDataAndExtractFeatures <- function(folderPath, loadTestData, transformations
   logMsg(paste('Load data and extract features from',folderPath))  
   
   # compute ICA and PCA transformation matrices, if they are not provided
-  transformationsPrecomputed <- is.null(transformations)
+  transformationsPrecomputed <- !is.null(transformations)
   if(!transformationsPrecomputed) {
     logMsg('Start ICA/PCA weight calculations')
     print(system.time(transformations <- calculateTransformationWeights(folderPath)))
@@ -46,7 +46,7 @@ loadDataAndExtractFeatures <- function(folderPath, loadTestData, transformations
     }
   }))
   
-  return(list(dataSet=folderData,transformations=transformations)
+  return(list(dataSet=folderData,transformations=transformations))
 }
 
 loadFileAndExtractFeatures <- function(filePath, icaWeights, pcaWeights) {
