@@ -62,7 +62,7 @@ accessQuality <- function(fit, classifierName, featureNames) {
   lambdaInd <- match(fit$lambda.min,fit$lambda)
   beta <- fit$glmnet.fit$beta
   AUC <- fit$cvm[lambdaInd]
-  print(paste(classifierName,'AUC =',AUC))
+  logMsg(paste(classifierName,'AUC =',AUC))
   
   fActivation <- data.frame(matrix(abs(beta[,lambdaInd]),nrow=1))
   colnames(fActivation) <- featureNames

@@ -23,11 +23,11 @@ usedPackages <- c('R.matlab',
 #   label ('ictal', 'interictal', NA), where NA represents the test set
 #   latency of the seizure, which is NA for all interictal and test clips
 loadDataAndExtractFeatures <- function(folderPath, loadTestData) {
-  print(paste('Load data and extract features from',folderPath))
-  print('Start ICA')
+  logMsg(paste('Load data and extract features from',folderPath))
+  logMsg('Start ICA/PCA weight calculations')
   print(system.time(transformations <- calculateTransformationWeights(folderPath)))
   files <- list.files(folderPath)
-  print('Start feature extraction')
+  logMsg('Start feature extraction')
   print(system.time(folderData <-foreach(i=1:length(files),.combine='rbind',.packages=usedPackages,.export=userFunctions) %dopar% {
     if(loadTestData | !grepl('_test_', files[i])) {
       filePath <- getPath(folderPath, files[i])
