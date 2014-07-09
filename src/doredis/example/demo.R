@@ -1,8 +1,8 @@
+host =  "redis.java-adventures.com"
+port = 6379
+queue = "test"
 
 initRedis <- function(password) {
-  host =  "redis.java-adventures.com"
-  port = 6379
-  queue = "test"
   if(is.na(password)) stop("Please provide redis password")
   
   library('doRedis')
@@ -19,14 +19,14 @@ startWorkerAndWait <- function(password) {
 startLocalWorker <- function(workerCount, password) {
   if(is.na(password)) stop("Please provide redis password")
   require('doRedis')
-  startLocalWorkers(n = workerCound, host =  host, port = port, queue = queue, password = password )
+  startLocalWorkers(n = workerCount, host =  host, port = port, queue = queue, password = password )
 }
 
 calc <- function() {
   p1 <- proc.time()
   Sys.sleep(1)
   print(proc.time() - p1)
-  matrix(0,nrow=500,ncol=500)
+  matrix(0,nrow=100,ncol=100)
 }
 
 runInParallel <- function() {
@@ -56,6 +56,16 @@ test <- function() {
   print(sprintf("Available workers: %s", getDoParWorkers()))
   run()
   runInParallel()
+}
+
+whoIsOutThere <- function() {
+  allnames <- foreach(1:2, .verbose = TRUE) %dopar% {
+    eval(parse(text='workerName'))
+  }
+  uniqueNames <- unique(unlist(allnames))
+  print(sprintf('There are %s workers out there.', length(uniqueNames)))
+  print(paste(uniqueNames))
+  
 }
 
 

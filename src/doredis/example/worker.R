@@ -10,5 +10,9 @@ main <- function(password) {
   redisWorker(host =  host, port = port, queue = queue, password = password )
 }
 
-password=commandArgs(TRUE)[1]
+workerName=commandArgs(TRUE)[1]
+if(is.na(workerName)) stop("Please define a name for this workder")
+
+password=commandArgs(TRUE)[2]
+if(is.na(password)) stop("Please provide the redis password")
 main(password = password)
