@@ -23,7 +23,7 @@ runCompetition <- function(dataPath, existingDataSet=NULL) {
   # load ICA and PCA transformation matrices if they exist
   transformationsPrecomputed <- file.exists(PATH_TO_TRANSFORMATIONS)
   if(transformationsPrecomputed) {
-    transformationsList <- load(PATH_TO_TRANSFORMATIONS)
+    transformationsList <- readRDS(file=PATH_TO_TRANSFORMATIONS)
   } else {
     transformationsList <- list()
     transformations <- NULL
@@ -44,23 +44,24 @@ runCompetition <- function(dataPath, existingDataSet=NULL) {
       # store dataSet (with all features and labels) and the transformations, 
       # if they have not been loaded from the file
       if(is.null(existingDataSet)) {
-        allData[[folder]] <- extractedData$dataSet        
+        finalDataSet <- extractedData$dataSet
       } else {
-        allData[[folder]] <- mergeDataSets(existingDataSet[[folder]],extractedData$dataSet)
+        finalDataSet <- mergeDataSets(existingDataSet[[folder]],extractedData$dataSet)
       }
+      allData[[folder]] <- finalDataSet
       if(!transformationsPrecomputed) {
         transformationsList[[folder]] <- extractedData$transformations
       }
       
       # train classifier and make prediction
-      prediction <- trainAndPredictLogistic(extractedData$dataSet)
+      prediction <- trainAndPredictLogistic(finalDataSet)
       prediction$submission
     } 
   }
   
   # save transformation matrices to file, if they have been calculated
   if(!transformationsPrecomputed){
-    save(transformationsList, PATH_TO_TRANSFORMATIONS)
+    saveRDS(transformationsList, file=PATH_TO_TRANSFORMATIONS)
   }
   
   # write submission file
