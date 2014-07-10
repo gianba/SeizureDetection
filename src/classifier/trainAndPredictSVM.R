@@ -19,9 +19,10 @@ trainAndPredictSVM <- function(dataSet, sFeatInds=NULL, eFeatInds=NULL) {
   testInd <- is.na(seizure)
   
   submission <- data.frame(clip=dataSet$clipID[testInd])
+  tunectr <- tune.control(nrepeat=1,repeat.aggregate=mean)
   
   features <- as.matrix(sFeatureSet)
-  tuned <- tune.svm(features[!testInd,], seizure[!testInd], kernel='radial', gamma=c(2^{-10:-3}), cost=c(2^{0:5}), probability=TRUE)
+  tuned <- tune.svm(features[!testInd,], seizure[!testInd], kernel='radial', gamma=c(3^{-6:-3}), cost=c(3^{0:4}), probability=TRUE,tunecontrol=tunectr)
   seizurePerf <- tuned$best.performance
   print(paste('Seizure Perf. =',seizurePerf,' with gamma:',tuned$best.parameters$gamma,', cost:',tuned$best.parameters$cost))
   fit <- tuned$best.model
@@ -34,7 +35,7 @@ trainAndPredictSVM <- function(dataSet, sFeatInds=NULL, eFeatInds=NULL) {
   hasEarlyTrainingSamples <- length(unique(early[seizureInd]))>1
   if(hasEarlyTrainingSamples) {
     features <- as.matrix(eFeatureSet)
-    tuned <- tune.svm(features[seizureInd,], as.factor(early[seizureInd]), kernel='radial', gamma=c(2^{-9:-2}), cost=c(2^{-1:4}), probability=TRUE)
+    tuned <- tune.svm(features[seizureInd,], as.factor(early[seizureInd]), kernel='radial', gamma=c(3^{-6:-3}), cost=c(3^{-1:3}), probability=TRUE,tunecontrol=tunectr)
     earlyPerf <- tuned$best.performance
     print(paste('Early Perf. =',earlyPerf ,' with gamma:',tuned$best.parameters$gamma,', cost:',tuned$best.parameters$cost))
     fit <- tuned$best.model
@@ -43,6 +44,7 @@ trainAndPredictSVM <- function(dataSet, sFeatInds=NULL, eFeatInds=NULL) {
     submission$early <- earlyProb * submission$seizure
   } else {
     # if no early seizure is contained in the training set, use default value
+    print(paste('No non-early training samples found. Using',PROB_EARLY_WITHOUT_TRAINING,'* seizure'))
     submission$early <- PROB_EARLY_WITHOUT_TRAINING * submission$seizure
     earlyPerf <- 0
   }
