@@ -22,8 +22,12 @@ getMaxAmplitudeChangeFeatures <- function(data, name) {
     }
     sortedChanges <- sort(ampChanges, decreasing=TRUE)
     for(l in 1:NOF_LARGEST_CHANGES) {
-      features[1,c*3-l+1] <- sortedChanges[l]
-      names[c*3-l+1] <- paste('AmpChange',l,name,'C',c,sep="")
+      if(l <= length(sortedChanges)) {
+        features[1,c*NOF_LARGEST_CHANGES-l+1] <- sortedChanges[l]
+      } else {
+        features[1,c*NOF_LARGEST_CHANGES-l+1] <- 0
+      }
+      names[c*NOF_LARGEST_CHANGES-l+1] <- paste('AmpChange',l,name,'C',c,sep="")
     }
   }
   

@@ -20,12 +20,14 @@ extractFeatures <- function(eegData, icaWeights, pcaWeights) {
   features <- cbind(getLyapunovFeature(pcaData[1:4,],'PCA'),features)
   features <- cbind(getPCAFeatures(eegData),features)
   features <- cbind(getCrossCorrelationFeatures(eegData),features)
-  features <- cbind(getMaxStepFeatures(eegData, 'Raw'),features)
-  features <- cbind(getMaxStepFeatures(pcaData, 'PCA'),features)
-  features <- cbind(getMaxStepFeatures(icaData, 'ICA'),features)
-  features <- cbind(getMaxAmplitudeChangeFeatures(eegData, 'Raw'),features)
-  features <- cbind(getMaxAmplitudeChangeFeatures(pcaData, 'PCA'),features)
-  features <- cbind(getMaxAmplitudeChangeFeatures(icaData, 'ICA'),features)
-  
+#   features <- getMaxAmplitudeChangeFeatures(eegData, 'Raw')
+#   features <- cbind(getMaxAmplitudeChangeFeatures(pcaData, 'PCA'),features)
+#   features <- cbind(getMaxAmplitudeChangeFeatures(icaData, 'ICA'),features)
+
+# Rather useless features...
+#   features <- cbind(getMaxStepFeatures(eegData, 'Raw'),features)
+#   features <- cbind(getMaxStepFeatures(pcaData, 'PCA'),features)
+#   features <- cbind(getMaxStepFeatures(icaData, 'ICA'),features)
+
   return(features)
 }
