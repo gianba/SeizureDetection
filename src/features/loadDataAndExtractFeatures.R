@@ -25,18 +25,18 @@ usedPackages <- c('R.matlab',
 #   label ('ictal', 'interictal', NA), where NA represents the test set
 #   latency of the seizure, which is NA for all interictal and test clips
 loadDataAndExtractFeatures <- function(folderPath, loadTestData, transformations) {
-  print(paste('Load data and extract features from',folderPath))
+  logMsg(paste('Load data and extract features from',folderPath))
   
   # compute ICA and PCA transformation matrices, if they are not provided
   transformationsPrecomputed <- !is.null(transformations)
   if(!transformationsPrecomputed) {
-    print('Start ICA')
+    logMsg('Start ICA')
     print(system.time(transformations <- calculateTransformationWeights(folderPath)))
   }
   
   # extract features for each file
   files <- list.files(folderPath)
-  print('Start feature extraction')
+  logMsg('Start feature extraction')
   print(system.time(folderData <-foreach(i=1:length(files),.combine='rbind',.packages=usedPackages,.export=userFunctions) %dopar% {
     if(loadTestData | !grepl('_test_', files[i])) {
       filePath <- getPath(folderPath, files[i])

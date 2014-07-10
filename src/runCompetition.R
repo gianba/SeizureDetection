@@ -14,8 +14,9 @@
 # Returns list with field:
 #   allData: A list of data.frames containing the extracted features and labels for every clip of each patient
 #   info: Informations about the classification, features relevance, etc. dependent on the classifier used
-runCompetition <- function(dataPath, existingDataSet=NULL) {
+runCompetition <- function(dataPath, method='svm', existingDataSet=NULL) {
   PATH_TO_TRANSFORMATIONS <- './transformations.RData'
+  if (method != 'logistic' && method != 'svm') stop(paste('Method', method, 'not implemented'))
   allData <- list()
   # global variable that can be written by classifier
   info <<- NULL
@@ -54,7 +55,11 @@ runCompetition <- function(dataPath, existingDataSet=NULL) {
       }
       
       # train classifier and make prediction
-      prediction <- trainAndPredictLogistic(finalDataSet)
+      if (method == 'logistic'){
+        prediction <- trainAndPredictLogistic(finalDataSet)
+      } else if (method == 'svm') {
+        prediction <- trainAndPredictSVM(finalDataSet)
+      }
       prediction$submission
     } 
   }
