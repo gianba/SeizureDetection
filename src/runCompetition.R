@@ -8,7 +8,8 @@
 # Returns list with field:
 #   allData: A list of data.frames containing the extracted features and labels for every clip of each patient
 #   info: Informations about the classification, features relevance, etc. dependent on the classifier used
-runCompetition <- function(dataPath) {
+runCompetition <- function(dataPath, method='svm') {
+  if (method != 'logistic' && method != 'svm') stop(paste('Method', method, 'not implemented'))
   allData <- list()
   # global variable that can be written by classifier
   info <<- NULL
@@ -19,7 +20,11 @@ runCompetition <- function(dataPath) {
     if(file.info(folderPath)$isdir) {
       dataSet <- loadDataAndExtractFeatures(folderPath, TRUE)
       allData[[ind]] <- dataSet
-      prediction <- trainAndPredictLogistic(dataSet)
+      if (method == 'logistic'){
+        prediction <- trainAndPredictLogistic(dataSet)
+      } else if (method == 'svm') {
+        prediction <- trainAndPredictSVM(dataSet)
+      }
       prediction$submission
     } 
   }

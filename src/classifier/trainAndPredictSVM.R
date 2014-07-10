@@ -23,7 +23,7 @@ trainAndPredictSVM <- function(dataSet, sFeatInds=NULL, eFeatInds=NULL) {
   features <- as.matrix(sFeatureSet)
   tuned <- tune.svm(features[!testInd,], seizure[!testInd], kernel='radial', gamma=c(2^{-10:-3}), cost=c(2^{0:5}), probability=TRUE)
   seizurePerf <- tuned$best.performance
-  print(paste('Seizure Perf. =',seizurePerf,' with gamma:',tuned$best.parameters$gamma,', cost:',tuned$best.parameters$cost))
+  logMsg(paste('Seizure Perf. =',seizurePerf,' with gamma:',tuned$best.parameters$gamma,', cost:',tuned$best.parameters$cost))
   fit <- tuned$best.model
   pred <- predict(fit, features[testInd,], probability=TRUE)
   submission$seizure <- attr(pred,'probabilities')[,1]
@@ -36,7 +36,7 @@ trainAndPredictSVM <- function(dataSet, sFeatInds=NULL, eFeatInds=NULL) {
     features <- as.matrix(eFeatureSet)
     tuned <- tune.svm(features[seizureInd,], as.factor(early[seizureInd]), kernel='radial', gamma=c(2^{-9:-2}), cost=c(2^{-1:4}), probability=TRUE)
     earlyPerf <- tuned$best.performance
-    print(paste('Early Perf. =',earlyPerf ,' with gamma:',tuned$best.parameters$gamma,', cost:',tuned$best.parameters$cost))
+    logMsg(paste('Early Perf. =',earlyPerf ,' with gamma:',tuned$best.parameters$gamma,', cost:',tuned$best.parameters$cost))
     fit <- tuned$best.model
     pred <- predict(fit, features[testInd,], probability=TRUE)
     earlyProb <- attr(pred,'probabilities')[,1]
