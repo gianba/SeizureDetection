@@ -31,7 +31,7 @@ loadDataAndExtractFeatures <- function(folderPath, loadTestData) {
   print(system.time(folderData <-foreach(i=1:length(files),.combine='rbind',.packages=usedPackages,.export=userFunctions) %dopar% {
     if(loadTestData | !grepl('_test_', files[i])) {
       filePath <- getPath(folderPath, files[i])
-      fileData <- loadFileAndExtractFeatures(filePath, transformations$ica, transformations$pca)
+      fileData <- loadFileAndExtractFeatures(filePath, transformations$ica, transformations$pca, transformations$n_components)
       fileData$clipID = files[i]
       fileData
     }
@@ -39,9 +39,9 @@ loadDataAndExtractFeatures <- function(folderPath, loadTestData) {
   return(folderData)
 }
 
-loadFileAndExtractFeatures <- function(filePath, icaWeights, pcaWeights) {
+loadFileAndExtractFeatures <- function(filePath, icaWeights, pcaWeights, n_components) {
   mat <- readMat(filePath)
-  features <- extractFeatures(mat$data, icaWeights, pcaWeights)
+  features <- extractFeatures(mat$data, icaWeights, pcaWeights, n_components)
   seizure <- NA
   lat <- NA
   if(grepl('_ictal_', filePath)) {

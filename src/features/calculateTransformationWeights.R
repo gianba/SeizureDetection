@@ -11,5 +11,8 @@ calculateTransformationWeights <- function(folderPath) {
   }
   a <- fastICA(t(signal), n.comp=16, alg.typ='parallel')
   p <- princomp(t(signal),scores=FALSE)
-  return(list(ica=a$K %*% a$W, pca=p$loadings))
+  sdev_limit <- sum(p$sdev)*0.8
+  n_components <- 1
+  while (sum(p$sdev[1:n_components]) < sdev_limit) n_components <- n_components + 1
+  return(list(ica=a$K %*% a$W, pca=p$loadings, n_components=n_components))
 }
