@@ -17,7 +17,7 @@ extractFeatures <- function(eegData, icaWeights, pcaWeights, n_components) {
   features <- cbind(getFractalDimFeatures(icaData,'ICA'), features)
   features <- cbind(getFractalDimFeatures(pcaData,'PCA'), features)
   features <- cbind(getLyapunovFeature(icaData,'ICA'),features)
-  features <- cbind(getLyapunovFeature(pcaData[1:4,],'PCA'),features)
+  features <- cbind(getLyapunovFeature(pcaData[1:ifelse(NOF_PCA_COMPONENTS<4, NOF_PCA_COMPONENTS, 4),],'PCA'),features)
   features <- cbind(getPCAFeatures(eegData),features)
   features <- cbind(getCrossCorrelationFeatures(eegData),features)
 #  features <- cbind(getMaxStepFeatures(eegData),features)
