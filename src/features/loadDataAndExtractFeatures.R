@@ -8,7 +8,9 @@ userFunctions <- c('getPath',
                    'getFractalDimFeatures',
                    'getLyapunovFeature',
                    'getPCAFeatures',
-                   'getCrossCorrelationFeatures')
+                   'getCrossCorrelationFeatures',
+                   'getMaxStepFeatures',
+                   'getMaxAmplitudeChangeFeatures')
 usedPackages <- c('R.matlab',
                   'fractaldim',
                   'fractal')
