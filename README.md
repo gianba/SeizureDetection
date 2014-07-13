@@ -24,3 +24,17 @@ Steps:
   write.socket(log.socket, sprintf(paste0(as.character(Sys.time()), ": ", 'message', "\n")))
   close.socket(log.socket)
   ```
+
+Example:
+
+```
+tryCatch({
+  fileData <- loadFileAndExtractFeatures(filePath, transformations$ica, transformations$pca, transformations$n_components)
+}, error=function(e) {
+  log.socket <- make.socket(port=4000)
+  write.socket(log.socket, sprintf(paste0(as.character(Sys.time()), ": ", paste('Error extracting features from file', filePath), "\n")))
+  write.socket(log.socket, sprintf(paste0(as.character(Sys.time()), ": ", e, "\n")))
+  close.socket(log.socket)
+  return(NA)
+})
+```
