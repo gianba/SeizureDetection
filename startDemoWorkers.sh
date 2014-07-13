@@ -1,4 +1,6 @@
 #!/bin/bash
+# Script to start worker nodes of the Redis example. Run it every minute as a cron job to
+# ensure that your workers are still up and running.
 #
 # Usage: ./startDemoWorkers.sh {number-of-workers} {redis-password}
 #
@@ -24,7 +26,11 @@ workersToStart=$(( $numberOfWorkers - $currentWorkers ))
 echo "workersToStart=$workersToStart"
 name=$(hostname)
 
+startTime=$(date +%Y-%m-%d_%H%M)
 for (( i=0; i<$workersToStart; i++)); do
-	echo $i
+	workerName="${name}_${i}_${startTime}"
+	logFile=$(readlink -f "${workerName}.log")
+	echo "Starting: $workerName. Logfile=$logFile"
+	nohup 'src/doredis/example/worker.R' "$workerName" "$redisPassword" &> $logFile &
 done
 #src/doredis/example/demo.R
