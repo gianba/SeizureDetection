@@ -18,6 +18,7 @@ Steps:
 - Choose the ports you are gonna use for logging, e.g. `4000` and `4001`
 - Spawn as many listeners as ports you chose, e.g. `nc -vv -k -l 4000` and `nc -vv -k -l 4001`
 - For every message you want to log, use the following three lines:
+
   ```
   log.socket <- make.socket(port=sample(4000:4001, 1, replace=T))
   write.socket(log.socket, sprintf(paste0(as.character(Sys.time()), ": ", 'message', "\n")))
