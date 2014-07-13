@@ -22,27 +22,28 @@ startLocalWorker <- function(workerCount, password) {
   startLocalWorkers(n = workerCount, host =  host, port = port, queue = queue, password = password )
 }
 
-calc <- function() {
+calc <- function(matrixSize, calculationTime) {
+  print(sprintf('calculationTime=%s', calculationTime))
   p1 <- proc.time()
-  Sys.sleep(1)
+  Sys.sleep(calculationTime)
   print(proc.time() - p1)
-  matrix(0,nrow=100,ncol=100)
+  matrix(0,nrow=matrixSize,ncol=matrixSize)
 }
 
-runInParallel <- function() {
+runInParallel <- function(calculations, matrixSize, calculationTime) {
   start <- proc.time()
-  foreach(bla=1:10, .verbose = TRUE, .export = c('calc')) %dopar% {
-    calc()
+  foreach(bla=1:calculations, .verbose = TRUE, .export = c('calc', 'matrixSize', 'calculationTime')) %dopar% {
+    calc(matrixSize, calculationTime)
   }
   print("-------------------")
   print(proc.time() - start)
   print("===================")
 }
 
-run <- function() {
+run <- function(calculations, matrixSize, calculationTime) {
   start <- proc.time()
-  foreach(bla=1:10) %do% {
-    calc()
+  foreach(bla=1:calculations) %do% {
+    calc(matrixSize, calculationTime)
   }
   print("-------------------")
   print(proc.time() - start)
