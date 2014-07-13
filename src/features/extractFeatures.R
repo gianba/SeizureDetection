@@ -1,7 +1,7 @@
 # Extracts the features from the eegData
 extractFeatures <- function(eegData, icaWeights, pcaWeights, n_components) {
   # calculate ica components
-  NOF_ICA_COMPONENTS <- n_components
+  NOF_ICA_COMPONENTS <- 6
   NOF_PCA_COMPONENTS <- n_components
   icaData <- t(t(eegData-rowMeans(eegData)) %*% icaWeights[,1:NOF_ICA_COMPONENTS])
   pcaData <- t(t(eegData) %*% pcaWeights[,1:NOF_PCA_COMPONENTS])
