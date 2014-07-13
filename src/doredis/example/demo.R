@@ -59,7 +59,7 @@ test <- function() {
 }
 
 whoIsOutThere <- function() {
-  allnames <- foreach(1:2, .verbose = TRUE) %dopar% {
+  allnames <- foreach(1:20, .verbose = TRUE) %dopar% {
     eval(parse(text='workerName'))
   }
   uniqueNames <- unique(unlist(allnames))
