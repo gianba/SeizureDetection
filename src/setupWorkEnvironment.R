@@ -10,6 +10,7 @@ setupWorkEnvironment <- function(createCluster = TRUE, dir = getwd()) {
   library('e1071')
   library('reshape2')
   library('ggplot2')
+  library('plyr')
 
   sourceDir(sprintf('%s/src', dir))
   
