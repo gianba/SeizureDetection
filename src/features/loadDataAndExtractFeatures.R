@@ -22,14 +22,14 @@ loadDataAndExtractFeatures <- function(folderPath, loadTestData, transformations
   logMsg('Start feature extraction')
   print(system.time(folderData <-foreach(i=1:length(files),.combine='rbind',.packages=usedPackages,.export=userFunctions) %dopar% {
     if(loadTestData | !grepl('_test_', files[i])) {
-      loadFileAndExtractFeatures(getPath(folderPath,files[i]), transformations)
+      extractFeaturesForFile(getPath(folderPath,files[i]), transformations)
     }
   }))
   
   return(list(dataSet=folderData,transformations=transformations))
 }
 
-loadFileAndExtractFeatures <- function(filePath, transformations) {
+extractFeaturesForFile <- function(filePath, transformations) {
   mat <- readMat(filePath)
   features <- extractFeatures(mat$data, transformations$ica, transformations$pca)
   lat <- if(grepl('_ictal_', filePath)) mat$latency else NA
