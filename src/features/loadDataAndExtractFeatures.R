@@ -32,13 +32,9 @@ loadDataAndExtractFeatures <- function(folderPath, loadTestData, transformations
 loadFileAndExtractFeatures <- function(filePath, transformations) {
   mat <- readMat(filePath)
   features <- extractFeatures(mat$data, transformations$ica, transformations$pca)
+  lat <- if(grepl('_ictal_', filePath)) mat$latency else NA
   seizure <- NA
-  lat <- NA
-  if(grepl('_ictal_', filePath)) {
-    seizure <- "ictal"
-    lat <- mat$latency
-  } else if(grepl('_interictal_', filePath)) {
-    seizure <- "interictal"
-  }
+  if(grepl('_ictal_', filePath)) seizure <- "ictal"
+  else if(grepl('_interictal_', filePath)) seizure <- "interictal"
   return(data.frame(features,label=factor(seizure,levels=c('ictal','interictal',NA),exclude=NULL),latency=lat, clipID=basename(fileName)))
 }
