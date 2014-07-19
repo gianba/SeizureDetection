@@ -7,13 +7,12 @@
 # 
 # Returns a list with fields: 
 #   dataSet:              Matrix with extracted subject features and labels arranged in rows
-#   transformations:      ICA/PCA transformations for the current subject. Same as the input ones if provided.
+#   transformations:      ICA/PCA transformations used for the current subject. Same as the input ones if provided.
 loadDataAndExtractFeatures <- function(folderPath, loadTestData, transformations) {  
   logMsg(paste('Load data and extract features from',folderPath))  
   
   # compute ICA and PCA transformation matrices, if they are not provided
-  transformationsPrecomputed <- !is.null(transformations)
-  if(!transformationsPrecomputed) {
+  if(is.null(transformations)) {
     logMsg('Start ICA/PCA weight calculations')
     print(system.time(transformations <- calculateTransformationWeights(folderPath)))
   }
@@ -23,19 +22,16 @@ loadDataAndExtractFeatures <- function(folderPath, loadTestData, transformations
   logMsg('Start feature extraction')
   print(system.time(folderData <-foreach(i=1:length(files),.combine='rbind',.packages=usedPackages,.export=userFunctions) %dopar% {
     if(loadTestData | !grepl('_test_', files[i])) {
-      filePath <- getPath(folderPath, files[i])
-      fileData <- loadFileAndExtractFeatures(filePath, transformations$ica, transformations$pca)
-      fileData$clipID = files[i]
-      fileData
+      loadFileAndExtractFeatures(getPath(folderPath,files[i]), transformations)
     }
   }))
   
   return(list(dataSet=folderData,transformations=transformations))
 }
 
-loadFileAndExtractFeatures <- function(filePath, icaWeights, pcaWeights) {
+loadFileAndExtractFeatures <- function(filePath, transformations) {
   mat <- readMat(filePath)
-  features <- extractFeatures(mat$data, icaWeights, pcaWeights)
+  features <- extractFeatures(mat$data, transformations$ica, transformations$pca)
   seizure <- NA
   lat <- NA
   if(grepl('_ictal_', filePath)) {
@@ -44,6 +40,5 @@ loadFileAndExtractFeatures <- function(filePath, icaWeights, pcaWeights) {
   } else if(grepl('_interictal_', filePath)) {
     seizure <- "interictal"
   }
-  extractedData <- data.frame(features,label=factor(seizure,levels=c('ictal','interictal',NA),exclude=NULL),latency=lat)
-  return(extractedData)
+  return(data.frame(features,label=factor(seizure,levels=c('ictal','interictal',NA),exclude=NULL),latency=lat, clipID=basename(fileName)))
 }
