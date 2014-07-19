@@ -36,5 +36,5 @@ extractFeaturesForFile <- function(filePath, transformations) {
   seizure <- NA
   if(grepl('_ictal_', filePath)) seizure <- "ictal"
   else if(grepl('_interictal_', filePath)) seizure <- "interictal"
-  return(data.frame(features,label=factor(seizure,levels=c('ictal','interictal',NA),exclude=NULL),latency=lat, clipID=basename(fileName)))
+  return(data.frame(features,label=factor(seizure,levels=c('ictal','interictal',NA),exclude=NULL),latency=lat,clipID=basename(filePath)))
 }
