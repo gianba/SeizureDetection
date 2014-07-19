@@ -25,6 +25,7 @@ runCompetition <- function(dataPath, method='svm', existingDataSet=NULL) {
   # load ICA and PCA transformation matrices if they exist
   transformationsPrecomputed <- file.exists(PATH_TO_TRANSFORMATIONS)
   if(transformationsPrecomputed) {
+    logMsg('Using precomputed transformations')  
     transformationsList <- readRDS(file=PATH_TO_TRANSFORMATIONS)
   } else {
     transformationsList <- list()
@@ -40,11 +41,11 @@ runCompetition <- function(dataPath, method='svm', existingDataSet=NULL) {
       if(transformationsPrecomputed) {
         transformations <- transformationsList[[folder]]
       }
+
       # load the data, compute transformations if not given, and extract features
       extractedData <- loadDataAndExtractFeatures(folderPath=folderPath, loadTestData=TRUE, transformations=transformations)
-      
-      # store dataSet (with all features and labels) and the transformations, 
-      # if they have not been loaded from the file
+
+      # store dataSet (potentially merging it with an existing one) and the transformations (if not previously provided)
       if(is.null(existingDataSet)) {
         finalDataSet <- extractedData$dataSet
       } else {
