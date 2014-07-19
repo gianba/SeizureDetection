@@ -56,9 +56,9 @@ runCompetition <- function(dataPath, method='svm', existingDataSet=NULL) {
       
       # train classifier and make prediction
       if (method == 'logistic'){
-        prediction <- trainAndPredictLogistic(dataSet)
+        prediction <- trainAndPredictLogistic(finalDataSet)
       } else if (method == 'svm') {
-        prediction <- trainAndPredictSVM(dataSet)
+        prediction <- trainAndPredictSVM(finalDataSet)
       }
       prediction$submission
     } 
