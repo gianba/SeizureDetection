@@ -7,13 +7,14 @@
 #   !!!  RUN setupWorkEnvironment() FIRST  !!!
 #
 # Parameters:
-#   dataPath: path to the folder which contains all the data folders (patients and dogs)
-#   existingDataSet: an optional list of data.frames containing previously computed features and labels for
-#         all subjects. If provided, the extracted features are appended (or overwritten) to
-#         this dataset.
-# Returns list with field:
-#   allData: A list of data.frames containing the extracted features and labels for every clip of each patient
-#   info: Informations about the classification, features relevance, etc. dependent on the classifier used
+#   dataPath:           Path to the folder which contains all the data folders (patients and dogs)
+#   method:             Training method
+#   existingDataSet:    Optional list of data.frames containing previously computed features and labels for all subjects.
+#                       If provided, the extracted features are appended (or overwritten) to this dataset.
+#
+# Returns list with fields:
+#   allData:            A list of data.frames containing the extracted features and labels for every clip of each patient
+#   info:               Informations about the classification, features relevance, etc. dependent on the classifier used
 runCompetition <- function(dataPath, method='svm', existingDataSet=NULL) {
   PATH_TO_TRANSFORMATIONS <- './transformations.RData'
   if (method != 'logistic' && method != 'svm') stop(paste('Method', method, 'not implemented'))

@@ -1,12 +1,13 @@
 # Loads all the data from a folder and extracts the features for each file
+#
 # Parameters:
-#   folderPath:       path to the folder where the data (.mat files) is located
-#   loadTrainingData: flag indicating if test data should be loaded as well
-# It returns a data.frame containing 
-#   clip ID
-#   all features 
-#   label ('ictal', 'interictal', NA), where NA represents the test set
-#   latency of the seizure, which is NA for all interictal and test clips
+#   folderPath:           Path to the folder where the data (.mat files) of a subject is located
+#   loadTestData:         Flag indicating if test data should be loaded as well
+#   transformations:      Precalculated ICA/PCA transformations for the current subject
+# 
+# Returns a list with fields: 
+#   dataSet:              Matrix with extracted subject features and labels arranged in rows
+#   transformations:      ICA/PCA transformations for the current subject. Same as the input ones if provided.
 loadDataAndExtractFeatures <- function(folderPath, loadTestData, transformations) {  
   logMsg(paste('Load data and extract features from',folderPath))  
   
