@@ -13,70 +13,31 @@
 #                       If provided, the extracted features are appended (or overwritten) to this dataset.
 #
 # Returns list with fields:
-#   allData:            A list of data.frames containing the extracted features and labels for every clip of each patient
+#   data:               A list of data.frames containing the extracted features and labels for every clip of each patient
 #   info:               Informations about the classification, features relevance, etc. dependent on the classifier used
 runCompetition <- function(dataPath, method='svm', existingDataSet=NULL) {
-  PATH_TO_TRANSFORMATIONS <- './transformations.RData'
   if (method != 'logistic' && method != 'svm') stop(paste('Method', method, 'not implemented'))
-  allData <- list()
-  # global variable that can be written by classifier
+  PATH_TO_TRANSFORMATIONS <- './transformations.RData'
+  dataSets <- list()
   info <<- NULL
   
-  # load ICA and PCA transformation matrices if they exist
-  transformationsPrecomputed <- file.exists(PATH_TO_TRANSFORMATIONS)
-  if(transformationsPrecomputed) {
-    logMsg('Using precomputed transformations')  
-    transformationsList <- readRDS(file=PATH_TO_TRANSFORMATIONS)
-  } else {
-    transformationsList <- list()
-    transformations <- NULL
-  }
-  
+  transformationsList <- if(file.exists(PATH_TO_TRANSFORMATIONS)) readRDS(file=PATH_TO_TRANSFORMATIONS) else list()
   folders <- list.files(dataPath)
   submission <- foreach(ind=1:length(folders),.combine='rbind') %do% {
     folder <- folders[ind]
     folderPath <- getPath(dataPath,folder)
     if(file.info(folderPath)$isdir) {
-      # if transformations are precomputed, extract the transformation for the given subject
-      if(transformationsPrecomputed) {
-        transformations <- transformationsList[[folder]]
-      }
-
-      # load the data, compute transformations if not given, and extract features
-      extractedData <- extractFeaturesForSubject(folderPath=folderPath, loadTestData=TRUE, transformations=transformations)
-
-      # store dataSet (potentially merging it with an existing one) and the transformations (if not previously provided)
-      if(is.null(existingDataSet)) {
-        finalDataSet <- extractedData$dataSet
-      } else {
-        finalDataSet <- mergeDataSets(existingDataSet[[folder]],extractedData$dataSet)
-      }
-      allData[[folder]] <- finalDataSet
-      if(!transformationsPrecomputed) {
-        transformationsList[[folder]] <- extractedData$transformations
-      }
-      
-      # train classifier and make prediction
-      if (method == 'logistic'){
-        prediction <- trainAndPredictLogistic(finalDataSet)
-      } else if (method == 'svm') {
-        prediction <- trainAndPredictSVM(finalDataSet)
-      }
-      prediction$submission
-    } 
+      extractedData <- extractFeaturesForSubject(folderPath, TRUE, transformationsList[[folder]])
+      subjectDataSet <- if(is.null(existingDataSet)) extractedData$dataSet else mergeDataSets(existingDataSet[[folder]],extractedData$dataSet)
+      dataSets[[folder]] <- subjectDataSet
+      if(!file.exists(PATH_TO_TRANSFORMATIONS)) transformationsList[[folder]] <- extractedData$transformations
+      trainAndPredict(subjectDataSet, folderPath, method)$submission
+    }
   }
   
-  # save transformation matrices to file, if they have been calculated
-  if(!transformationsPrecomputed){
-    saveRDS(transformationsList, file=PATH_TO_TRANSFORMATIONS)
-  }
-  
-  # write submission file
+  if(!file.exists(PATH_TO_TRANSFORMATIONS)) saveRDS(transformationsList, file=PATH_TO_TRANSFORMATIONS)  
   write.csv(submission, file="submission.csv", row.names=FALSE)
-  
-  # return all dataSets (with all features and labels) for further process in trainOnly()
-  # and return info list, containing evaluations of the classifier
-  return(list(data=allData,info=info))
+  return(list(data=dataSets,info=info))
 }
 
 mergeDataSets <- function(existingDataSet,extractedDataSet) {
