@@ -2,7 +2,7 @@
 # feature extraction function, etc. need to be specified here.)
 # This is required by the doSnow package for parallel processing...
 userFunctions <- c('getPath', 
-                   'extractFeaturesForFile', 
+                   'extractFeaturesForClip', 
                    'extractFeatures', 
                    'getFrequencyFeatures', 
                    'getFractalDimFeatures',

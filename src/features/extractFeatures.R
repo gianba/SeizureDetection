@@ -1,33 +1,40 @@
-# Extracts the features from the eegData
-extractFeatures <- function(eegData, icaWeights, pcaWeights) {
-  # calculate ica components
-  NOF_ICA_COMPONENTS <- 6
-  NOF_PCA_COMPONENTS <- 5
-  icaData <- t(t(eegData-rowMeans(eegData)) %*% icaWeights[,1:NOF_ICA_COMPONENTS])
-  pcaData <- t(t(eegData) %*% pcaWeights[,1:NOF_PCA_COMPONENTS])
-
-  # Every getXXXFeatures function has to return a data.frame with one row and several columns as features.
-  # The columns should be named after the extracted feature.
-  features <- data.frame(matrix(ncol = 0, nrow = 1))
+# Loads all the data from a folder and extracts the features for each file
+#
+# Parameters:
+#   folderPath:           Path to the folder where the data (.mat files) of a subject is located
+#   loadTestData:         Flag indicating if test data should be loaded as well
+#   transformations:      Precalculated ICA/PCA transformations for the current subject
+# 
+# Returns a list with fields: 
+#   dataSet:              Matrix with extracted subject features and labels arranged in rows
+#   transformations:      ICA/PCA transformations used for the current subject. Same as the input ones if provided.
+extractFeaturesForSubject <- function(folderPath, loadTestData, transformations) {  
+  logMsg(paste('Load data and extract features from',folderPath))  
   
-  features <- cbind(getFrequencyFeatures(eegData,'SpecRaw'), features)
-  features <- cbind(getFrequencyFeatures(icaData,'SpecICA',NOF_ICA_COMPONENTS), features)
-  features <- cbind(getFrequencyFeatures(pcaData,'SpecPCA',NOF_PCA_COMPONENTS), features)
-  features <- cbind(getFractalDimFeatures(eegData[c(1,5,9,13),],'Raw'), features)
-  features <- cbind(getFractalDimFeatures(icaData,'ICA'), features)
-  features <- cbind(getFractalDimFeatures(pcaData,'PCA'), features)
-  features <- cbind(getLyapunovFeature(icaData,'ICA'),features)
-  features <- cbind(getLyapunovFeature(pcaData[1:4,],'PCA'),features)
-  features <- cbind(getPCAFeatures(eegData),features)
-  features <- cbind(getCrossCorrelationFeatures(eegData),features)
-#   features <- getMaxAmplitudeChangeFeatures(eegData, 'Raw')
-#   features <- cbind(getMaxAmplitudeChangeFeatures(pcaData, 'PCA'),features)
-#   features <- cbind(getMaxAmplitudeChangeFeatures(icaData, 'ICA'),features)
+  # compute ICA and PCA transformation matrices, if they are not provided
+  if(is.null(transformations)) {
+    logMsg('Start ICA/PCA weight calculations')
+    print(system.time(transformations <- calculateTransformationWeights(folderPath)))
+  }
+  
+  # extract features for each file
+  files <- list.files(folderPath)
+  logMsg('Start feature extraction')
+  print(system.time(folderData <-foreach(i=1:length(files),.combine='rbind',.packages=usedPackages,.export=userFunctions) %dopar% {
+    if(loadTestData | !grepl('_test_', files[i])) {
+      extractFeaturesForClip(getPath(folderPath,files[i]), transformations)
+    }
+  }))
+  
+  return(list(dataSet=folderData,transformations=transformations))
+}
 
-# Rather useless features...
-#   features <- cbind(getMaxStepFeatures(eegData, 'Raw'),features)
-#   features <- cbind(getMaxStepFeatures(pcaData, 'PCA'),features)
-#   features <- cbind(getMaxStepFeatures(icaData, 'ICA'),features)
-
-  return(features)
+extractFeaturesForClip <- function(filePath, transformations) {
+  mat <- readMat(filePath)
+  features <- extractFeatures(mat$data, transformations$ica, transformations$pca)
+  lat <- if(grepl('_ictal_', filePath)) mat$latency else NA
+  seizure <- NA
+  if(grepl('_ictal_', filePath)) seizure <- "ictal"
+  else if(grepl('_interictal_', filePath)) seizure <- "interictal"
+  return(data.frame(features,label=factor(seizure,levels=c('ictal','interictal',NA),exclude=NULL),latency=lat,clipID=basename(filePath)))
 }

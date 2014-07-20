@@ -43,7 +43,7 @@ runCompetition <- function(dataPath, method='svm', existingDataSet=NULL) {
       }
 
       # load the data, compute transformations if not given, and extract features
-      extractedData <- loadDataAndExtractFeatures(folderPath=folderPath, loadTestData=TRUE, transformations=transformations)
+      extractedData <- extractFeaturesForSubject(folderPath=folderPath, loadTestData=TRUE, transformations=transformations)
 
       # store dataSet (potentially merging it with an existing one) and the transformations (if not previously provided)
       if(is.null(existingDataSet)) {
