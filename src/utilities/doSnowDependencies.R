@@ -3,7 +3,7 @@
 # This is required by the doSnow package for parallel processing...
 userFunctions <- c('getPath', 
                    'extractFeaturesForClip', 
-                   'extractFeatures', 
+                   '_extractFeatures', 
                    'getFrequencyFeatures', 
                    'getFractalDimFeatures',
                    'getLyapunovFeature',
