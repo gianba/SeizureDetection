@@ -46,11 +46,11 @@ trainAndPredictLogistic <- function(dataSet) {
       info$earlyFRank <<- seizureAssessment$fRank
     }
   } else {
-    info$seizureFAct <<- rbind(info$seizureFAct,seizureAssessment$fAct)
-    info$seizureFRank <<- rbind(info$seizureFRank,seizureAssessment$fRank)
+    info$seizureFAct <<- rbind.fill(info$seizureFAct,seizureAssessment$fAct)
+    info$seizureFRank <<- rbind.fill(info$seizureFRank,seizureAssessment$fRank)
     if(hasEarlyTrainingSamples) {
-      info$earlyFAct <<- rbind(info$earlyFAct,earlyAssessment$fAct)
-      info$earlyFRank <<- rbind(info$earlyFRank,earlyAssessment$fRank)
+      info$earlyFAct <<- rbind.fill(info$earlyFAct,earlyAssessment$fAct)
+      info$earlyFRank <<- rbind.fill(info$earlyFRank,earlyAssessment$fRank)
     } 
   }  
   
