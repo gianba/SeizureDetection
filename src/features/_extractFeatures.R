@@ -1,5 +1,5 @@
 # Extracts the features from the eegData
-extractFeatures <- function(eegData, icaWeights, pcaWeights) {
+_extractFeatures <- function(eegData, icaWeights, pcaWeights) {
   # calculate ica components
   NOF_ICA_COMPONENTS <- 6
   NOF_PCA_COMPONENTS <- 5

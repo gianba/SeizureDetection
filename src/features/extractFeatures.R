@@ -31,7 +31,7 @@ extractFeaturesForSubject <- function(folderPath, loadTestData, transformations)
 
 extractFeaturesForClip <- function(filePath, transformations) {
   mat <- readMat(filePath)
-  features <- extractFeatures(mat$data, transformations$ica, transformations$pca)
+  features <- _extractFeatures(mat$data, transformations$ica, transformations$pca)
   lat <- if(grepl('_ictal_', filePath)) mat$latency else NA
   seizure <- NA
   if(grepl('_ictal_', filePath)) seizure <- "ictal"
