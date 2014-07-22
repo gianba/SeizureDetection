@@ -1,0 +1,8 @@
+data
+*.log
+workspace.RData
+.Rproj.user
+.RData
+.Rhistory
+SeizureDetection.Rproj
+
