@@ -14,3 +14,17 @@ getSlidingWindowFeatures <- function(eegData, name) {
     low_bound <- low_bound + window_step
   }
 }
+
+getWindows <- function(samples) {
+  window_size <- samples/10
+  window_step <- window_size/2
+  windows <- list()
+  low_bound <- 1
+  high_bound <- window_size
+  while (high_bound <= samples) {
+    windows[[paste0(low_bound,':',high_bound)]] <- c(low_bound,high_bound)
+    low_bound <- low_bound + window_step
+    high_bound <- high_bound + window_step
+  }
+  return(windows)
+}
