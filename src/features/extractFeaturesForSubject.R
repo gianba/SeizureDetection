@@ -12,18 +12,19 @@ extractFeaturesForSubject <- function(folderPath, loadTestData, transformations)
   if(is.null(transformations)) print(system.time(transformations <- calculateTransformationWeights(folderPath)))
   logMsg(paste('Extract features from subject',folderPath))
   files <- list.files(folderPath)
+  windows <- getWindows(ncol(readMat(getPath(folderPath,files[1]))$data)) # assumes all clips of a subject have the same number of samples
   print(system.time(folderData <-foreach(i=1:length(files),.combine='rbind',.packages=usedPackages,.export=userFunctions) %dopar% {
     if(loadTestData | !grepl('_test_', files[i])) {
-      extractFeaturesForClip(getPath(folderPath,files[i]), transformations)
+      extractFeaturesForClip(getPath(folderPath,files[i]), transformations, windows)
     }
   }))
   
   return(list(dataSet=folderData,transformations=transformations))
 }
 
-extractFeaturesForClip <- function(filePath, transformations) {
+extractFeaturesForClip <- function(filePath, transformations, windows) {
   mat <- readMat(filePath)
-  features <- extractFeatures(mat$data, transformations$ica, transformations$pca)
+  features <- extractFeatures(mat$data, transformations$ica, transformations$pca, windows)
   lat <- if(grepl('_ictal_', filePath)) mat$latency else NA
   seizure <- NA
   if(grepl('_ictal_', filePath)) seizure <- "ictal"

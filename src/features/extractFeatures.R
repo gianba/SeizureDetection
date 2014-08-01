@@ -1,5 +1,6 @@
 # Extracts the features from the eegData
-extractFeatures <- function(eegData, icaWeights, pcaWeights) {
+extractFeatures <- function(eegData, icaWeights, pcaWeights, windows) {
+    
   # calculate ica components
   NOF_ICA_COMPONENTS <- 6
   NOF_PCA_COMPONENTS <- 5
@@ -20,6 +21,8 @@ extractFeatures <- function(eegData, icaWeights, pcaWeights) {
   features <- cbind(getLyapunovFeature(pcaData[1:4,],'PCA'),features)
   features <- cbind(getPCAFeatures(eegData),features)
   features <- cbind(getCrossCorrelationFeatures(eegData),features)
+  features <- cbind(getSlidingWindowFeatures(eegData, 'SW', windows),features)
+  
 #   features <- getMaxAmplitudeChangeFeatures(eegData, 'Raw')
 #   features <- cbind(getMaxAmplitudeChangeFeatures(pcaData, 'PCA'),features)
 #   features <- cbind(getMaxAmplitudeChangeFeatures(icaData, 'ICA'),features)

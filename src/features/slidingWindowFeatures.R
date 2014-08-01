@@ -1,18 +1,16 @@
-getSlidingWindowFeatures <- function(eegData, name) {
-  fs <- ncol(eegData)
-  window_size <- ceiling(fs/5)
-  window_step <- ceiling(window_size/2)
-  low_bound <- 1
-  high_bound <- window_size
-  while(high_bound <= fs) {
-    print(paste(low_bound,':',high_bound))
-    low_bound <- low_bound + window_step
-    high_bound <- high_bound + window_step
-  }
-  while(low_bound <= fs) {
-    print(paste(low_bound,':',fs))
-    low_bound <- low_bound + window_step
-  }
+getSlidingWindowFeatures <- function(eegData, name, windows) {
+  signalMeans <- colMeans(eegData)
+  
+  means <- lapply(windows, function(w) mean(signalMeans[w[1]:w[2]]))
+  names(means) <- paste0(name,'Mean',names(means))
+  
+  max <- lapply(windows, function(w) max(signalMeans[w[1]:w[2]]))
+  names(max) <- paste0(name,'Max',names(max))
+  
+  min <- lapply(windows, function(w) min(signalMeans[w[1]:w[2]]))
+  names(min) <- paste0(name,'Min',names(min))
+  
+  return(data.frame(append(append(means,max),min)))
 }
 
 getWindows <- function(samples) {
