@@ -10,7 +10,8 @@ userFunctions <- c('getPath',
                    'getPCAFeatures',
                    'getCrossCorrelationFeatures',
                    'getMaxStepFeatures',
-                   'getMaxAmplitudeChangeFeatures')
+                   'getMaxAmplitudeChangeFeatures',
+                   'getSlidingWindowFeatures')
 usedPackages <- c('R.matlab',
                   'fractaldim',
                   'fractal')
