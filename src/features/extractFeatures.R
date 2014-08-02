@@ -2,7 +2,7 @@
 extractFeatures <- function(eegData, icaWeights, pcaWeights, windows) {
     
   # calculate ica components
-  NOF_ICA_COMPONENTS <- 6
+  NOF_ICA_COMPONENTS <- 8
   NOF_PCA_COMPONENTS <- 5
   icaData <- t(t(eegData-rowMeans(eegData)) %*% icaWeights[,1:NOF_ICA_COMPONENTS])
   pcaData <- t(t(eegData) %*% pcaWeights[,1:NOF_PCA_COMPONENTS])
