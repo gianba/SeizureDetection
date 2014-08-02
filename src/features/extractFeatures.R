@@ -22,6 +22,7 @@ extractFeatures <- function(eegData, icaWeights, pcaWeights, windows) {
   features <- cbind(getPCAFeatures(eegData),features)
   features <- cbind(getCrossCorrelationFeatures(eegData),features)
   features <- cbind(getSlidingWindowFeatures(eegData, 'SW', windows),features)
+  features <- cbind(getEntropyFeatures(pcaData, 'PCA'),features)
   
 #   features <- getMaxAmplitudeChangeFeatures(eegData, 'Raw')
 #   features <- cbind(getMaxAmplitudeChangeFeatures(pcaData, 'PCA'),features)
