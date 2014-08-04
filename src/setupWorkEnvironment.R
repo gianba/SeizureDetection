@@ -2,7 +2,9 @@ setupWorkEnvironment <- function(createCluster = TRUE, dir = getwd()) {
   library('R.matlab')
   library('fastICA')
   library('foreach')
-  library('doSNOW')
+  if (createCluster) {
+    library('doSNOW')
+  }
   library('glmnet')
   library('tools')
   library('fractaldim')

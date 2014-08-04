@@ -9,12 +9,15 @@
 #   dataSet:              Matrix with extracted subject features and labels arranged in rows
 #   transformations:      ICA/PCA transformations used for the current subject. Same as the input ones if provided.
 extractFeaturesForSubject <- function(folderPath, loadTestData, transformations) {  
+  logMsg(sprintf('extractFeaturesForSubject. folderPath=%s', folderPath))
   if(is.null(transformations)) print(system.time(transformations <- calculateTransformationWeights(folderPath)))
   logMsg(paste('Extract features from subject',folderPath))
   files <- list.files(folderPath)
+  tokens <- strsplit(folderPath, '/')[[1]]
+  dir <- tokens[length(tokens)]
   print(system.time(folderData <-foreach(i=1:length(files),.combine='rbind',.packages=usedPackages,.export=userFunctions) %dopar% {
     if(loadTestData | !grepl('_test_', files[i])) {
-      extractFeaturesForClip(getPath(folderPath,files[i]), transformations)
+      extractFeaturesForClip(getWorkerPath(dir,files[i]), transformations)
     }
   }))
   
@@ -22,8 +25,11 @@ extractFeaturesForSubject <- function(folderPath, loadTestData, transformations)
 }
 
 extractFeaturesForClip <- function(filePath, transformations) {
+  print('readmat')
   mat <- readMat(filePath)
+  print('extractFeatures')
   features <- extractFeatures(mat$data, transformations$ica, transformations$pca)
+  print('grepl')
   lat <- if(grepl('_ictal_', filePath)) mat$latency else NA
   seizure <- NA
   if(grepl('_ictal_', filePath)) seizure <- "ictal"

@@ -1,8 +1,11 @@
 calculateTransformationWeights <- function(folderPath) {
   logMsg(paste('Calculate transformation weights for subject',folderPath))
+  tokens <- strsplit(folderPath, '/')[[1]]
+  dir <- tokens[length(tokens)]
   files <- list.files(folderPath, pattern='*ictal*')
+  
   signal <- foreach(i=1:length(files),.combine='cbind',.packages=usedPackages,.export=userFunctions) %dopar% {
-    mat <- readMat(getPath(folderPath, files[i]))
+    mat <-readMat(getWorkerPath(dir, files[i]))
     nofSamples <- ncol(mat$data)
     if(nofSamples>1000) {
       everyNth <- floor(nofSamples/1000)

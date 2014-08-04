@@ -1,7 +1,7 @@
 #!/usr/bin/Rscript
-workerDataPath <- '/home/celli/sources/git/SeizureDetection/data/mini'
-main <- function(password) {
-  if(is.na(workerName)) stop("Please define a name for this worker")
+#workerDataPath <- '/home/celli/sources/git/SeizureDetection/data/mini'
+main <- function(password, workerDataPath) {
+  if(is.na(workerDataPath)) stop("Please define workerDataPath for this worker")
   if(is.na(password)) stop("Please provide the redis password")
   
   host =  "redis.java-adventures.com"
@@ -14,8 +14,8 @@ main <- function(password) {
   redisWorker(host =  host, port = port, queue = queue, password = password )
 }
 
-workerName=commandArgs(TRUE)[1]
+workerDataPath=commandArgs(TRUE)[1]
 
 password=commandArgs(TRUE)[2]
 
-main(password = password)
+main(password = password, workerDataPath = workerDataPath)

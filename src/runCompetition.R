@@ -25,7 +25,9 @@ runCompetition <- function(dataPath, method='svm', existingDataSet=NULL) {
   folders <- list.files(dataPath)
   submission <- foreach(ind=1:length(folders),.combine='rbind') %do% {
     folder <- folders[ind]
+    print(folder)
     folderPath <- getPath(dataPath,folder)
+    print(sprintf('folderPath=%s', folderPath))
     if(file.info(folderPath)$isdir) {
       extractedData <- extractFeaturesForSubject(folderPath, TRUE, transformationsList[[folder]])
       subjectDataSet <- if(is.null(existingDataSet)) extractedData$dataSet else mergeDataSets(existingDataSet[[folder]],extractedData$dataSet)
