@@ -1,5 +1,4 @@
 #!/usr/bin/Rscript
-#workerDataPath <- '/home/celli/sources/git/SeizureDetection/data/mini'
 main <- function(password, workerDataPath) {
   if(is.na(workerDataPath)) stop("Please define workerDataPath for this worker")
   if(is.na(password)) stop("Please provide the redis password")

@@ -26,7 +26,6 @@ startWorkersAndContinue <- function(workerCount, host =  redisHost, port = redis
 
 whoIsOutThere <- function() {
   allnames <- foreach(1:50, .verbose = TRUE) %dopar% {
-    #eval(parse(text='workerName'))
     sprintf("%s_%s", system(command = "hostname", intern = TRUE), Sys.getpid())
   }
   uniqueNames <- unique(unlist(allnames))
