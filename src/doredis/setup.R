@@ -28,7 +28,7 @@ whoIsOutThere <- function() {
   allnames <- foreach(1:50, .verbose = TRUE) %dopar% {
     sprintf("%s_%s", system(command = "hostname", intern = TRUE), Sys.getpid())
   }
-  uniqueNames <- unique(unlist(allnames))
+  uniqueNames <- sort(unique(unlist(allnames)))
   print(sprintf('There are %s workers out there.', length(uniqueNames)))
   print(paste(uniqueNames))
 }
