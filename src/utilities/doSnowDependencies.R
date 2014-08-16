@@ -11,7 +11,9 @@ userFunctions <- c('getPath',
                    'getCrossCorrelationFeatures',
                    'getMaxStepFeatures',
                    'getMaxAmplitudeChangeFeatures',
-                   'getSlidingWindowFeatures')
+                   'getSlidingWindowFeatures',
+                   'getEntropyFeatures')
 usedPackages <- c('R.matlab',
                   'fractaldim',
-                  'fractal')
+                  'fractal',
+                  'pracma')
