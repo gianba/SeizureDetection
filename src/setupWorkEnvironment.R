@@ -11,6 +11,9 @@ setupWorkEnvironment <- function(createCluster = TRUE, dir = getwd()) {
   library('reshape2')
   library('ggplot2')
   library('plyr')
+  library('pROC')
+  library('mRMRe')
+  library('pracma')
 
   sourceDir(sprintf('%s/src', dir))
   
